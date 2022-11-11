@@ -59,6 +59,32 @@
                     }
                 ]
             }
+        },
+        "RTPubDefaultIPv4": {
+            "Type": "AWS::EC2::Route",
+            "DependsOn": "InternetGatewayAttachment",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "RTPub"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": {
+                    "Ref": "InternetGateway"
+                }
+            }
+        },
+        "RTPubDefaultIPv6": {
+            "Type": "AWS::EC2::Route",
+            "DependsOn": "InternetGatewayAttachment",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "RTPub"
+                },
+                "DestinationIpv6CidrBlock": "::/0",
+                "GatewayId": {
+                    "Ref": "InternetGateway"
+                }
+            }
         }
     }
 }
