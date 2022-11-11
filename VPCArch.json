@@ -604,6 +604,192 @@
                     }
                 ]
             }
+        },
+        "IPv6WorkaroundSubnetPUBA": {
+            "Type": "Custom::SubnetModify",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::GetAtt": ["IPv6WorkaroundLambda", "Arn"]
+                },
+                "SubnetId": {
+                    "Ref": "SNPUBA"
+                }
+            }
+        },
+        "IPv6WorkaroundSubnetPUBB": {
+            "Type": "Custom::SubnetModify",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::GetAtt": ["IPv6WorkaroundLambda", "Arn"]
+                },
+                "SubnetId": {
+                    "Ref": "SNPUBB"
+                }
+            }
+        },
+        "IPv6WorkaroundSubnetPUBC": {
+            "Type": "Custom::SubnetModify",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::GetAtt": ["IPv6WorkaroundLambda", "Arn"]
+                },
+                "SubnetId": {
+                    "Ref": "SNPUBC"
+                }
+            }
+        },
+        "IPv6WorkaroundRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": ["lambda.amazonaws.com"]
+                            },
+                            "Action": ["sts:AssumeRole"]
+                        }
+                    ]
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyName": {
+                            "Fn::Sub": "ipv6-fix-logs-${AWS::StackName}"
+                        },
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "logs:CreateLogGroup",
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents"
+                                    ],
+                                    "Resource": "arn:aws:logs:*:*:*"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "PolicyName": {
+                            "Fn::Sub": "ipv6-fix-modify-${AWS::StackName}"
+                        },
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": ["ec2:ModifySubnetAttribute"],
+                                    "Resource": "*"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "IPv6WorkaroundLambda": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.lambda_handler",
+                "Code": {
+                    "ZipFile": {
+                        "Fn::Sub": "import cfnresponse\nimport boto3\n\ndef lambda_handler(event, context):\n    if event['RequestType'] is 'Delete':\n      cfnresponse.send(event, context, cfnresponse.SUCCESS)\n      return\n\n    responseValue = event['ResourceProperties']['SubnetId']\n    ec2 = boto3.client('ec2', region_name='${AWS::Region}')\n    ec2.modify_subnet_attribute(AssignIpv6AddressOnCreation={\n                                    'Value': True\n                                  },\n                                  SubnetId=responseValue)\n    responseData = {}\n    responseData['SubnetId'] = responseValue\n    cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData, \"CustomResourcePhysicalID\")\n"
+                    }
+                },
+                "Runtime": "python3.9",
+                "Role": {
+                    "Fn::GetAtt": ["IPv6WorkaroundRole", "Arn"]
+                },
+                "Timeout": 30
+            }
+        },
+        "SGWordpress": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "GroupDescription": "Control access to Wordpress Instance(s)",
+                "SecurityGroupIngress": [
+                    {
+                        "Description": "Allow HTTP IPv4 IN",
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ]
+            }
+        },
+        "SGDatabase": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "GroupDescription": "Control access to Database",
+                "SecurityGroupIngress": [
+                    {
+                        "Description": "Allow MySQL IN",
+                        "IpProtocol": "tcp",
+                        "FromPort": "3306",
+                        "ToPort": "3306",
+                        "SourceSecurityGroupId": {
+                            "Ref": "SGWordpress"
+                        }
+                    }
+                ]
+            }
+        },
+        "SGLoadBalancer": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "GroupDescription": "Control access to Load Balancer",
+                "SecurityGroupIngress": [
+                    {
+                        "Description": "Allow HTTP IPv4 IN",
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ]
+            }
+        },
+        "SGEFS": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "GroupDescription": "Control access to EFS",
+                "SecurityGroupIngress": [
+                    {
+                        "Description": "Allow NFS/EFS IPv4 IN",
+                        "IpProtocol": "tcp",
+                        "FromPort": "2049",
+                        "ToPort": "2049",
+                        "SourceSecurityGroupId": {
+                            "Ref": "SGWordpress"
+                        }
+                    }
+                ]
+            }
+        },
+        "CWAgentConfig": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+                "Type": "String",
+                "Value": "{\n  \"agent\": {\n    \"metrics_collection_interval\": 60,\n    \"run_as_user\": \"root\"\n  },\n  \"logs\": {\n    \"logs_collected\": {\n      \"files\": {\n        \"collect_list\": [\n          {\n            \"file_path\": \"/var/log/secure\",\n            \"log_group_name\": \"/var/log/secure\",\n            \"log_stream_name\": \"{instance_id}\"\n          },\n          {\n            \"file_path\": \"/var/log/httpd/access_log\",\n            \"log_group_name\": \"/var/log/httpd/access_log\",\n            \"log_stream_name\": \"{instance_id}\"\n          },\n          {\n            \"file_path\": \"/var/log/httpd/error_log\",\n            \"log_group_name\": \"/var/log/httpd/error_log\",\n            \"log_stream_name\": \"{instance_id}\"\n          }\n        ]\n      }\n    }\n  },\n  \"metrics\": {\n    \"append_dimensions\": {\n      \"AutoScalingGroupName\": \"${aws:AutoScalingGroupName}\",\n      \"ImageId\": \"${aws:ImageId}\",\n      \"InstanceId\": \"${aws:InstanceId}\",\n      \"InstanceType\": \"${aws:InstanceType}\"\n    },\n    \"metrics_collected\": {\n      \"collectd\": {\n        \"metrics_aggregation_interval\": 60\n      },\n      \"cpu\": {\n        \"measurement\": [\n          \"cpu_usage_idle\",\n          \"cpu_usage_iowait\",\n          \"cpu_usage_user\",\n          \"cpu_usage_system\"\n        ],\n        \"metrics_collection_interval\": 60,\n        \"resources\": [\n          \"*\"\n        ],\n        \"totalcpu\": false\n      },\n      \"disk\": {\n        \"measurement\": [\n          \"used_percent\",\n          \"inodes_free\"\n        ],\n        \"metrics_collection_interval\": 60,\n        \"resources\": [\n          \"*\"\n        ]\n      },\n      \"diskio\": {\n        \"measurement\": [\n          \"io_time\",\n          \"write_bytes\",\n          \"read_bytes\",\n          \"writes\",\n          \"reads\"\n        ],\n        \"metrics_collection_interval\": 60,\n        \"resources\": [\n          \"*\"\n        ]\n      },\n      \"mem\": {\n        \"measurement\": [\n          \"mem_used_percent\"\n        ],\n        \"metrics_collection_interval\": 60\n      },\n      \"netstat\": {\n        \"measurement\": [\n          \"tcp_established\",\n          \"tcp_time_wait\"\n        ],\n        \"metrics_collection_interval\": 60\n      },\n      \"statsd\": {\n        \"metrics_aggregation_interval\": 60,\n        \"metrics_collection_interval\": 10,\n        \"service_address\": \":8125\"\n      },\n      \"swap\": {\n        \"measurement\": [\n          \"swap_used_percent\"\n        ],\n        \"metrics_collection_interval\": 60\n      }\n    }\n  }\n}\n"
+            }
         }
     }
 }
