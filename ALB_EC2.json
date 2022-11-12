@@ -79,6 +79,17 @@
                     "Ref": "VPC"
                 }
             }
+        },
+        "StoreParamALB": {
+            "Type": "AWS::SSM::Parameter",
+            "Description": "Endpoint ALB for use in WP site",
+            "Properties": {
+                "Name": "/App/WP/ALBDNSNAME",
+                "Type": "String",
+                "Value": {
+                    "Fn::GetAtt": ["ELBV2ALB", "DNSName"]
+                }
+            }
         }
     }
 }
