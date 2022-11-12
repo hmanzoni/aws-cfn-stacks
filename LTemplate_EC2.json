@@ -1,5 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Creation of a Launch Template with all the instructions for create a WP Web Site with external RDS DB, EFS, File System and App Load Balancer",
     "Parameters": {
         "LatestAmiId": {
             "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
@@ -12,7 +13,7 @@
         },
         "InstanceEC2": {
             "Type": "String",
-            "Description": "Instance for EC2",
+            "Description": "Instance for EC2 you can check all the types in https://aws.amazon.com/ec2/instance-types/",
             "Default": "t2.micro"
         }
     },
@@ -54,8 +55,7 @@
         "TemplateWP": {
             "Type": "AWS::EC2::LaunchTemplate",
             "Properties": {
-                "LaunchTemplateName": "Wordpress-LT",
-                "VersionDescription": "Wordpress, uses EFS filesystem defined in /App/WP/EFSFSID, ALB home added to WP Database",
+                "VersionDescription": "Wordpress, scalable using external services EFS filesystem, ALB home added to WP Database",
                 "LaunchTemplateData": {
                     "ImageId": { "Ref": "LatestAmiId" },
                     "InstanceType": { "Ref": "InstanceEC2" },

@@ -1,21 +1,22 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Creation of EFS File System with 3 Mount targets",
     "Parameters": {
-        "SubnetA": {
+        "SubnetAppA": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "Select just ONE ID from Subnets"
+            "Description": "Select a Subnets for mount the target in that AZ"
         },
-        "SubnetB": {
+        "SubnetAppB": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "Select just ONE ID from Subnets"
+            "Description": "Select a Subnets for mount the target in that AZ"
         },
-        "SubnetC": {
+        "SubnetAppC": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "Select just ONE ID from Subnets"
+            "Description": "Select a Subnets for mount the target in that AZ"
         },
         "SGMountTarget": {
             "Type": "List<AWS::EC2::SecurityGroup::Id>",
-            "Description": "Security Group for Mount Target"
+            "Description": "Security Group for EFS Mount Target"
         }
     },
     "Resources": {
@@ -42,7 +43,7 @@
             "Type": "AWS::EFS::MountTarget",
             "Properties": {
                 "FileSystemId": { "Ref": "FileSystemResource" },
-                "SubnetId": { "Ref": "SubnetA" },
+                "SubnetId": { "Ref": "SubnetAppA" },
                 "SecurityGroups": { "Ref": "SGMountTarget" }
             }
         },
@@ -50,7 +51,7 @@
             "Type": "AWS::EFS::MountTarget",
             "Properties": {
                 "FileSystemId": { "Ref": "FileSystemResource" },
-                "SubnetId": { "Ref": "SubnetB" },
+                "SubnetId": { "Ref": "SubnetAppB" },
                 "SecurityGroups": { "Ref": "SGMountTarget" }
             }
         },
@@ -58,7 +59,7 @@
             "Type": "AWS::EFS::MountTarget",
             "Properties": {
                 "FileSystemId": { "Ref": "FileSystemResource" },
-                "SubnetId": { "Ref": "SubnetC" },
+                "SubnetId": { "Ref": "SubnetAppC" },
                 "SecurityGroups": { "Ref": "SGMountTarget" }
             }
         },

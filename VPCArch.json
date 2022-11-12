@@ -1,5 +1,6 @@
 {
-    "Description": "Wordpress Architecture Claranet - VPC",
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Architecture /16 VPC with 6 Private Subnets /20 and 3 Public Subnets /20",
     "Resources": {
         "VPC": {
             "Type": "AWS::EC2::VPC",
@@ -10,7 +11,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "CNWPVPC"
+                        "Value": "HCMWPVPC"
                     }
                 ]
             }
@@ -30,7 +31,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "CNWP-IGW"
+                        "Value": "HCMWP-IGW"
                     }
                 ]
             }
@@ -55,7 +56,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "CNWP-vpc-rt-pub"
+                        "Value": "HCMWP-vpc-rt-pub"
                     }
                 ]
             }

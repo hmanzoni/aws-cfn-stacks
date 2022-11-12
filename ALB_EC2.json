@@ -1,5 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Creation of load balancer with Security Group in 3 public Subnets",
     "Parameters": {
         "VPC": {
             "Type": "AWS::EC2::VPC::Id",
@@ -7,19 +8,19 @@
         },
         "SubnetPubA": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "Select just ONE ID from Subnets"
+            "Description": "Select a Public Subnets"
         },
         "SubnetPubB": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "Select just ONE ID from Subnets"
+            "Description": "Select a Public Subnets"
         },
         "SubnetPubC": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "Select just ONE ID from Subnets"
+            "Description": "Select a Public Subnets"
         },
         "MySecurityGroup": {
             "Type": "List<AWS::EC2::SecurityGroup::Id>",
-            "Description": "Select the security group for you DB"
+            "Description": "Select the security group for your App"
         }
     },
     "Resources": {
@@ -77,7 +78,7 @@
         },
         "ALBStoreParamDNS": {
             "Type": "AWS::SSM::Parameter",
-            "Description": "Endpoint ALB for use in WP site",
+            "Description": "DNSName ALB for use in WP site",
             "Properties": {
                 "Name": "/App/WP/ALBDNSNAME",
                 "Type": "String",

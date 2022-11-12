@@ -1,9 +1,10 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Creation of Auto Scaling Group associated with a Scaling Policy Request Count Target Value",
     "Parameters": {
         "SubnetsPub": {
             "Type": "List<AWS::EC2::Subnet::Id>",
-            "Description": "At least two public subnets Publics in different Availability Zones in the selected VPC"
+            "Description": "At least one public subnets Publics in different Availability Zones in the selected VPC"
         },
         "VPC": {
             "Type": "AWS::EC2::VPC::Id",
@@ -11,7 +12,7 @@
         },
         "LaunchTemplateId": {
             "Type": "String",
-            "Description": "Launch Template information id"
+            "Description": "Launch Template information id example lt-018a79d6bdaa8c7fd"
         },
         "LaunchTemplateVersion": {
             "Default": "1",
@@ -20,7 +21,7 @@
         },
         "TargetGroupLoadBalancerARN": {
             "Type": "String",
-            "Description": "Target Group Load Balancer ARN"
+            "Description": "Target Group Load Balancer ARN example arn:partition:service:region:account-id:resource-type/resource-id"
         },
         "ALBRequestCountTargetValue": {
             "Default": "50",

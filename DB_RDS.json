@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "AWS CloudFormation Sample Template for creating an Amazon RDS DB instance: Sample template showing how to create a DB instance with Enhanced Monitoring enabled. **WARNING** This template creates an RDS DB instance. You will be billed for the AWS resources used if you create a stack from this template.",
+    "Description": "Creation of RDS DB and save some params in Store Params SSM",
     "Parameters": {
         "DBInstanceID": {
             "Default": "mydbinstance",
@@ -24,7 +24,7 @@
             "Default": "db.t3.micro",
             "Description": "DB instance class",
             "Type": "String",
-            "ConstraintDescription": "Must select a valid DB instance type."
+            "ConstraintDescription": "Must select a valid DB instance type. Please check the types in https://aws.amazon.com/rds/instance-types/"
         },
         "DBAllocatedStorage": {
             "Default": "50",
@@ -32,7 +32,7 @@
             "Type": "Number",
             "MinValue": "20",
             "MaxValue": "65536",
-            "ConstraintDescription": "must be between 20 and 65536 GiB."
+            "ConstraintDescription": "Must be between 20 and 65536 GiB."
         },
         "DBUsername": {
             "NoEcho": "true",
@@ -41,11 +41,11 @@
             "MinLength": "1",
             "MaxLength": "16",
             "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
-            "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
+            "ConstraintDescription": "Must begin with a letter and contain only alphanumeric characters."
         },
         "SubnetsDB": {
             "Type": "List<AWS::EC2::Subnet::Id>",
-            "Description": "ID from Subnets"
+            "Description": "Select the Subnets"
         },
         "MySecurityGroup": {
             "Type": "List<AWS::EC2::SecurityGroup::Id>",
@@ -56,7 +56,7 @@
         "wpDBSubnetGroup": {
             "Type": "AWS::RDS::DBSubnetGroup",
             "Properties": {
-                "DBSubnetGroupDescription": "RDS Subnet Group for WordPress",
+                "DBSubnetGroupDescription": "RDS Subnet Group",
                 "SubnetIds": {
                     "Ref": "SubnetsDB"
                 }
