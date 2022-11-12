@@ -1,0 +1,84 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Parameters": {
+        "VPC": {
+            "Type": "AWS::EC2::VPC::Id",
+            "Description": "Select your VPC"
+        },
+        "SubnetPubA": {
+            "Type": "AWS::EC2::Subnet::Id",
+            "Description": "Select just ONE ID from Subnets"
+        },
+        "SubnetPubB": {
+            "Type": "AWS::EC2::Subnet::Id",
+            "Description": "Select just ONE ID from Subnets"
+        },
+        "SubnetPubC": {
+            "Type": "AWS::EC2::Subnet::Id",
+            "Description": "Select just ONE ID from Subnets"
+        },
+        "MySecurityGroup": {
+            "Type": "List<AWS::EC2::SecurityGroup::Id>",
+            "Description": "Select the security group for you DB"
+        }
+    },
+    "Resources": {
+        "ELBV2ALB": {
+            "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+            "Properties": {
+                "Type": "application",
+                "Scheme": "internet-facing",
+                "IpAddressType": "ipv4",
+                "SecurityGroups": {
+                    "Ref": "MySecurityGroup"
+                },
+                "SubnetMappings": [
+                    {
+                        "SubnetId": { "Ref": "SubnetPubA" }
+                    },
+                    {
+                        "SubnetId": { "Ref": "SubnetPubB" }
+                    },
+                    {
+                        "SubnetId": { "Ref": "SubnetPubC" }
+                    }
+                ]
+            }
+        },
+        "HTTPlistener": {
+            "Type": "AWS::ElasticLoadBalancingV2::Listener",
+            "Properties": {
+                "DefaultActions": [
+                    {
+                        "Type": "redirect",
+                        "RedirectConfig": {
+                            "Protocol": "HTTPS",
+                            "Port": 443,
+                            "Host": "#{host}",
+                            "Path": "/#{path}",
+                            "Query": "#{query}",
+                            "StatusCode": "HTTP_301"
+                        }
+                    }
+                ],
+                "LoadBalancerArn": {
+                    "Ref": "ELBV2ALB"
+                },
+                "Port": 80,
+                "Protocol": "HTTP"
+            }
+        },
+        "ELBV2TG": {
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties": {
+                "HealthCheckEnabled": true,
+                "Port": 80,
+                "Protocol": "HTTP",
+                "ProtocolVersion": "HTTP1",
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            }
+        }
+    }
+}
