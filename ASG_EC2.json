@@ -1,0 +1,85 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Parameters": {
+        "Subnets": {
+            "Type": "List<AWS::EC2::Subnet::Id>",
+            "Description": "At least two public subnets in different Availability Zones in the selected VPC"
+        },
+        "VPC": {
+            "Type": "AWS::EC2::VPC::Id",
+            "Description": "A VPC that allows the load balancer access to the Internet"
+        },
+        "myLaunchTemplateId": {
+            "Type": "String",
+            "Description": "Launch Template information id"
+        },
+        "myLaunchTemplateVersion": {
+            "Type": "String",
+            "Description": "Launch Template information version"
+        },
+        "myTargetGroupLoadBalancerId": {
+            "Type": "String",
+            "Description": "Target Group Load Balancer Id"
+        },
+        "TargetGroupFullName": {
+            "Type": "String",
+            "Description": "Target Group FullName"
+        },
+        "LoadBalancerFullName": {
+            "Type": "String",
+            "Description": "Load Balancer FullName"
+        },
+        "ALBRequestCountTargetValue": {
+            "Type": "String",
+            "Description": "The optimal average request count per instance during any one-minute interval"
+        }
+    },
+    "Resources": {
+        "myASG": {
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Properties": {
+                "LaunchTemplate": {
+                    "LaunchTemplateId": { "Ref": "myLaunchTemplateId" },
+                    "Version": { "Ref": "myLaunchTemplateVersion" }
+                },
+                "TargetGroupARNs": [{ "Ref": "myTargetGroupLoadBalancerId" }],
+                "VPCZoneIdentifier": { "Ref": "Subnets" },
+                "HealthCheckType": "ELB",
+                "DesiredCapacity": "1",
+                "MinSize": "1",
+                "MaxSize": "3",
+                "Tags": {
+                    "Key": "Name",
+                    "PropagateAtLaunch": true,
+                    "Value": "Wordpress-ASG"
+                }
+            }
+        },
+        "myALBRequestCountPolicy": {
+            "Type": "AWS::AutoScaling::ScalingPolicy",
+            "Properties": {
+                "AutoScalingGroupName": {
+                    "Ref": "myASG"
+                },
+                "PolicyType": "TargetTrackingScaling",
+                "TargetTrackingConfiguration": {
+                    "PredefinedMetricSpecification": {
+                        "PredefinedMetricType": "ALBRequestCountPerTarget",
+                        "ResourceLabel": {
+                            "Fn::Join": [
+                                "/",
+                                [
+                                    { "Ref": "LoadBalancerFullName" },
+                                    { "Ref": "TargetGroupFullName" }
+                                ]
+                            ]
+                        }
+                    },
+                    "TargetValue": {
+                        "Ref": "ALBRequestCountTargetValue"
+                    }
+                }
+            }
+        }
+    }
+}
