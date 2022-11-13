@@ -11,7 +11,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "HCMWPVPC"
+                        "Value": "HCMVPC"
                     }
                 ]
             }
@@ -31,7 +31,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "HCMWP-IGW"
+                        "Value": "HCM-IGW"
                     }
                 ]
             }
@@ -56,7 +56,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "HCMWP-vpc-rt-pub"
+                        "Value": "HCM-vpc-rt-pub"
                     }
                 ]
             }
