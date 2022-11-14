@@ -8,6 +8,12 @@
         "InstanceEC2": {
             "Type": "String"
         },
+        "DBEndpoint": {
+            "Type": "String"
+        },
+        "VersionWP": {
+            "Type": "String"
+        },
         "SecurityGroupEC2": {
             "Type": "String"
         }
@@ -47,6 +53,28 @@
                 ]
             }
         },
+        "DBEndpointAppWPDB": {
+            "Type": "AWS::SSM::Parameter",
+            "Description": "Wordpress Database DBEndpoint",
+            "Properties": {
+                "Name": "/App/WP/DBEndpoint",
+                "Type": "String",
+                "Value": {
+                    "Ref": "DBEndpoint"
+                }
+            }
+        },
+        "VersionAppWP": {
+            "Type": "AWS::SSM::Parameter",
+            "Description": "Wordpress Version",
+            "Properties": {
+                "Name": "/App/WP/VersionWP",
+                "Type": "String",
+                "Value": {
+                    "Ref": "VersionWP"
+                }
+            }
+        },
         "TemplateWP": {
             "Type": "AWS::EC2::LaunchTemplate",
             "Properties": {
@@ -66,6 +94,8 @@
                                 "",
                                 [
                                     "#!/bin/bash \n",
+                                    "VersionWP=$(aws ssm get-parameters --region us-east-1 --names /App/WP/VersionWP --query Parameters[0].Value) \n",
+                                    "VersionWP=`echo wordpress-$VersionWP | sed -e 's/^\"//' -e 's/\"$//'` \n",
                                     "ALBDNSNAME=$(aws ssm get-parameters --region us-east-1 --names /App/WP/ALBDNSNAME --query Parameters[0].Value) \n",
                                     "ALBDNSNAME=`echo $ALBDNSNAME | sed -e 's/^\"//' -e 's/\"$//'` \n",
                                     "EFSFSID=$(aws ssm get-parameters --region us-east-1 --names /App/WP/EFSFSID --query Parameters[0].Value) \n",
@@ -90,12 +120,12 @@
                                     "chown -R ec2-user:apache /var/www/ \n",
                                     "echo -e \"$EFSFSID:/ /var/www/html/wp-content efs _netdev,tls,iam 0 0\" >> /etc/fstab \n",
                                     "mount -a -t efs defaults \n",
-                                    "wget http://wordpress.org/latest.tar.gz -P /var/www/html \n",
+                                    "wget http://wordpress.org/$VersionWP.tar.gz -P /var/www/html \n",
                                     "cd /var/www/html \n",
-                                    "tar -zxvf latest.tar.gz \n",
+                                    "tar -zxvf $VersionWP.tar.gz \n",
                                     "cp -rvf wordpress/* . \n",
                                     "rm -R wordpress \n",
-                                    "rm latest.tar.gz \n",
+                                    "rm $VersionWP.tar.gz \n",
                                     "sudo cp ./wp-config-sample.php ./wp-config.php \n",
                                     "sed -i \"s/'database_name_here'/'$DBName'/g\" wp-config.php \n",
                                     "sed -i \"s/'username_here'/'$DBUser'/g\" wp-config.php \n",

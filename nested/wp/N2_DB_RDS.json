@@ -68,17 +68,6 @@
                 }
             }
         },
-        "DBEndpointAppWPDB": {
-            "Type": "AWS::SSM::Parameter",
-            "Description": "Wordpress Database DBEndpoint",
-            "Properties": {
-                "Name": "/App/WP/DBEndpoint",
-                "Type": "String",
-                "Value": {
-                    "Fn::GetAtt": ["MyDB", "Endpoint.Address"]
-                }
-            }
-        },
         "MyDB": {
             "Type": "AWS::RDS::DBInstance",
             "Properties": {
@@ -105,7 +94,17 @@
                 "PubliclyAccessible": false,
                 "DBName": {
                     "Ref": "DBName"
-                }
+                },
+                "MultiAZ": true,
+                "StorageType": "io1",
+                "Iops": "3000"
+            }
+        }
+    },
+    "Outputs": {
+        "OutDBEndpoint": {
+            "Value": {
+                "Fn::GetAtt": ["MyDB", "Endpoint.Address"]
             }
         }
     }

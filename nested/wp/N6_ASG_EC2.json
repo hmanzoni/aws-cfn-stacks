@@ -47,15 +47,14 @@
                     { "Ref": "SubnetPubB" },
                     { "Ref": "SubnetPubC" }
                 ],
-                "HealthCheckType": "ELB",
-                "DesiredCapacity": "1",
-                "MinSize": "1",
-                "MaxSize": "3",
+                "DesiredCapacity": "6",
+                "MinSize": "3",
+                "MaxSize": "9",
                 "Tags": [
                     {
                         "Key": "Name",
                         "PropagateAtLaunch": true,
-                        "Value": "Wordpress-ASG"
+                        "Value": "Wordpress-HCM-ASG"
                     }
                 ]
             }

@@ -42,8 +42,13 @@
         },
         "InstanceEC2": {
             "Type": "String",
-            "Description": "Instance for EC2 you can check all the types in https://aws.amazon.com/ec2/instance-types/",
+            "Description": "Instance for EC2 you can check all the types on https://aws.amazon.com/ec2/instance-types/",
             "Default": "t2.micro"
+        },
+        "VersionWP": {
+            "Type": "String",
+            "Description": "Please write the numbers from a valid version of Worpress example 5.8.6 or 6.1, you can check the version on https://wordpress.org/download/releases/",
+            "Default": "6.1"
         },
         "ALBRequestCountTargetValue": {
             "Default": "50",
@@ -55,13 +60,13 @@
         "N1VPCArch": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
-                "TemplateURL": "s3.url.file.N1_VPCArch.json"
+                "TemplateURL": "https://cnwp-nested-stack-202211.s3.amazonaws.com/wp/N1_VPCArch.json"
             }
         },
         "N2DBRDS": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
-                "TemplateURL": "s3.url.file.N2_DB_RDS.json",
+                "TemplateURL": "https://cnwp-nested-stack-202211.s3.amazonaws.com/wp/N2_DB_RDS.json",
                 "Parameters": {
                     "DBName": {
                         "Ref": "DBName"
@@ -93,7 +98,7 @@
         "N3EFSSF": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
-                "TemplateURL": "s3.url.file.N3_EFS_SF.json",
+                "TemplateURL": "https://cnwp-nested-stack-202211.s3.amazonaws.com/wp/N3_EFS_SF.json",
                 "Parameters": {
                     "SubnetAppA": {
                         "Fn::GetAtt": ["N1VPCArch", "Outputs.OutSnAppA"]
@@ -113,7 +118,7 @@
         "N4ALBEC2": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
-                "TemplateURL": "s3.url.file.N4_ALB_EC2.json",
+                "TemplateURL": "https://cnwp-nested-stack-202211.s3.amazonaws.com/wp/N4_ALB_EC2.json",
                 "Parameters": {
                     "VPC": {
                         "Fn::GetAtt": ["N1VPCArch", "Outputs.OutVPC"]
@@ -136,13 +141,19 @@
         "N5LTemplateEC2": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
-                "TemplateURL": "s3.url.file.N5_LTemplate_EC2.json",
+                "TemplateURL": "https://cnwp-nested-stack-202211.s3.amazonaws.com/wp/N5_LTemplate_EC2.json",
                 "Parameters": {
+                    "VersionWP": {
+                        "Ref": "VersionWP"
+                    },
                     "LatestAmiId": {
                         "Ref": "LatestAmiId"
                     },
                     "InstanceEC2": {
                         "Ref": "InstanceEC2"
+                    },
+                    "DBEndpoint": {
+                        "Fn::GetAtt": ["N2DBRDS", "Outputs.OutDBEndpoint"]
                     },
                     "SecurityGroupEC2": {
                         "Fn::GetAtt": ["N1VPCArch", "Outputs.OutSGWorp"]
@@ -153,8 +164,7 @@
         "N6ASGEC2": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
-                "TemplateURL": "s3.url.file.N6_ASG_EC2.json",
-                "DependsOn": "N2DBRDS",
+                "TemplateURL": "https://cnwp-nested-stack-202211.s3.amazonaws.com/wp/N6_ASG_EC2.json",
                 "Parameters": {
                     "VPC": {
                         "Fn::GetAtt": ["N1VPCArch", "Outputs.OutVPC"]
