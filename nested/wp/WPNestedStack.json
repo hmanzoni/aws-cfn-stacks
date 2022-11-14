@@ -12,13 +12,13 @@
             "ConstraintDescription": "Must begin with a letter and contain only alphanumeric characters."
         },
         "DBInstanceClass": {
-            "Default": "db.t3.micro",
-            "Description": "DB instance class",
+            "Default": "db.m5d.xlarge",
+            "Description": "DB instance class example db.t3.micro",
             "Type": "String",
             "ConstraintDescription": "Must select a valid DB instance type."
         },
         "DBAllocatedStorage": {
-            "Default": "50",
+            "Default": "400",
             "Description": "The size of the database (GiB)",
             "Type": "Number",
             "MinValue": "20",
