@@ -10,13 +10,15 @@ The WordPress site FrontEnd is deployed into EC2, the Database is located in RDS
 1. Enter in your AWS account.
 2. Go to the service AWS `Systems Manager` and then to `Parameter Store` (on the left).
 3. Create a new parameter which will be used for setup the Database password:
-* Name: "/App/WP/DBPassword"
-* Tier: Standard
-* Type: SecureString
-* KMS Key Source: My Current Account
-* KMS Key ID as default 
-* Value: (write your secure password)
-* Click Create parameter
+```text
+Name: "/App/WP/DBPassword"
+Tier: Standard
+Type: SecureString
+KMS Key Source: My Current Account
+KMS Key ID as default 
+Value: (write your secure password)
+Click Create parameter
+```
 4. Now for deploy all the structure you should go to `CloudFormation` then `Stacks` and `Create stack` > `with new resources (standard)`.
 5. Into the input "Amazon S3 URL" you should enter this URL https://cnwp-nested-stack-202211.s3.amazonaws.com/wp/WPNestedStack.json the press `Next`.
 6. You must provide a name for you stack and you can modify some options for configurate the Database, Instance EC2 and version of Wordpress. Please press `Next`.
