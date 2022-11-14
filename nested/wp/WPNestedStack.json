@@ -47,11 +47,11 @@
         },
         "VersionWP": {
             "Type": "String",
-            "Description": "Please write the numbers from a valid version of Worpress example 5.8.6 or 6.1, you can check the version on https://wordpress.org/download/releases/",
-            "Default": "6.1"
+            "Description": "Using latest will be installed the last version of WP but you can indicate a custom valid version of Worpress writing wordpress-5.8.6 or wordpress-6.1, you can check the versions on https://wordpress.org/download/releases/",
+            "Default": "latest"
         },
         "ALBRequestCountTargetValue": {
-            "Default": "50",
+            "Default": "500",
             "Type": "String",
             "Description": "The optimal average request count per instance during any one-minute interval"
         }

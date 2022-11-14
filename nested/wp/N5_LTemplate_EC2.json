@@ -95,7 +95,7 @@
                                 [
                                     "#!/bin/bash \n",
                                     "VersionWP=$(aws ssm get-parameters --region us-east-1 --names /App/WP/VersionWP --query Parameters[0].Value) \n",
-                                    "VersionWP=`echo wordpress-$VersionWP | sed -e 's/^\"//' -e 's/\"$//'` \n",
+                                    "VersionWP=`echo $VersionWP | sed -e 's/^\"//' -e 's/\"$//'` \n",
                                     "ALBDNSNAME=$(aws ssm get-parameters --region us-east-1 --names /App/WP/ALBDNSNAME --query Parameters[0].Value) \n",
                                     "ALBDNSNAME=`echo $ALBDNSNAME | sed -e 's/^\"//' -e 's/\"$//'` \n",
                                     "EFSFSID=$(aws ssm get-parameters --region us-east-1 --names /App/WP/EFSFSID --query Parameters[0].Value) \n",
