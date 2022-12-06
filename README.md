@@ -7,13 +7,23 @@ The provided CloudFormation template automates the entire creation and deploymen
 The project includes the following templates:
 1. VPC Structures 
    1. This include: Internet Gateway, Subnets and their Route Tables Associations
-2. Lambda Functions
-3. AWS IAM Roles
+2. Lambda functions in order to handle the service:
+   1. EC2 (Auto assign Ipv6 and Subnet)
+   2. Simple Email Service (SES) (Send email)
+   3. API Gateway (Communicate the steps from the API and send the instruction to the State Machine)
+3. IAM Roles in order to allow:
+   1. Lambda functions
+   2. State Machine
 4. Amazon Relational Database Service (**RDS**)
 5. Amazon Elastic File System (**EFS**) File System (**FS**)
 6. Application Load Balancers (**ALB**)
 7. Launch Template
 8. AutoScaling Group (**ASG**)
+9. SSM Parameter with the CloudWatch configuration for monitoring EC2 Instance
+10. Simple Email Service (**SES**)
+11. S3 Bucket as Static website configuration
+12. State Machine with Step Functions
+13. API Gateway (RestAPI) with CORS enabled and association with a Lambda Function
 
 ## Prerequisite
 
@@ -52,9 +62,3 @@ To tear down your application and remove all resources associated with the Templ
 ## License Summary
 
 This sample code is made available under a modified MIT license. See the LICENSE file.
-
-
-
-
-
-
