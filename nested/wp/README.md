@@ -1,6 +1,7 @@
 # WordPress Nested Stack AWS :rocket:
 
 ## Project description
+
 This is a project create for deploy a WordPress website using AWS CloudFormation.
 The WordPress site FrontEnd is deployed into EC2, the Database is located in RDS services (Multi-AZ), the File System use EFS services mounted in differents AZ and the endpoint is handle by Application Load Balancer. All the instances provisioning is handle by the Auto Scaling Group which control in base at the quantity of request into the EC2 instance.
 
@@ -28,6 +29,7 @@ Click Create parameter
 
 
 ## AWS Architecture Worpress
+
 The architecture of the App is compose by: 
 1. `VPC` /20 with 9 `subnets` /16 where 3 are public and 6 are private, leaving 7 subnets /16 for spare and future uses.
 2. The stack will provide also the necessary `Security Group`, `Route Table` with their associations and `Internet Gateway`
@@ -40,4 +42,5 @@ The architecture of the App is compose by:
 
 
 ## AWS Architecture diagrams
-![App Architecture](https://github.com/hcaman/aws-cfn-stacks/blob/master/nested/wp/2-WPArchImg.png?raw=true)
+
+![App Architecture](https://github.com/hcaman/aws-cfn-stacks/blob/master/nested/wp/Arch_diagram.png?raw=true)
