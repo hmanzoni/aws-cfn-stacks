@@ -106,4 +106,4 @@ Resources:
       StageName: !Ref DeployStageName
 Outputs:
   apiGatewayInvokeURL:
-    Value: !Sub https://${RestApiGWResource}.execute-api.${AWS::Region}.amazonaws.com/${DeployStageName}
+    Value: !Sub https://${RestApiGWResource}.execute-api.${AWS::Region}.amazonaws.com/${DeployStageName}/${ApiResourcePath}

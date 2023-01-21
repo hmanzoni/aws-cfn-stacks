@@ -101,8 +101,8 @@ Resources:
     DependsOn: [RestApiMethodPOST, RestApiMethodOPTION]
     Properties:
       RestApiId: !Ref RestApiGWResource
-      Description: ${DeployStageName}
-      StageName: ${DeployStageName}
+      Description: !Ref DeployStageName
+      StageName: !Ref DeployStageName
 Outputs:
   apiGatewayInvokeURL:
-    Value: !Sub https://${RestApiGWResource}.execute-api.${AWS::Region}.amazonaws.com/${DeployStageName}
+    Value: !Sub https://${RestApiGWResource}.execute-api.${AWS::Region}.amazonaws.com/${DeployStageName}/${ApiResourcePath}
