@@ -21,7 +21,7 @@ Value: (write your secure password)
 Click Create parameter
 ```
 4. Now for deploy all the structure you should go to `CloudFormation` then `Stacks` and `Create stack` > `with new resources (standard)`.
-5. Into the input "Amazon S3 URL" you should enter this URL https://cnwp-nested-stack-202211.s3.amazonaws.com/wp/WPNestedStack.json the press `Next`.
+5. Into the input "Amazon S3 URL" you should enter this URL https://hugo-manzoni-labs.s3.amazonaws.com/stacks/wp/WPNestedStack.json the press `Next`.
 6. You must provide a name for you stack and you can modify some options for configurate the Database, Instance EC2 and version of Wordpress. Please press `Next`.
 7. Now press `Next` again, and in Capabilities check the acknowledge checkboxes and then `Submit`.
 8. Now you need wait all the stacks be complete.
