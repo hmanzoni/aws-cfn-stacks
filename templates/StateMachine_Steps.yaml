@@ -16,8 +16,6 @@ Resources:
     Properties:
       StateMachineName: !Ref SMachineName
       RoleArn: !Ref ArnStateMachineRole
-      LoggingConfiguration: #check
-        Level: ALL
       DefinitionString: !Sub |-
         {
           "Comment": "${SMachineName} - using native SNS SMS and Lambda for email.",
