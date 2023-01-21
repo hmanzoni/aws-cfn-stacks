@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Registration of a valid Email on AWS SES
+Parameters:
+  Email:
+    Description: This email will be register on SES for recive the emails from the app.
+    Type: String
+    MinLength: 5
+    ConstraintDescription: You should enter a valid email
+  StateMachineName:
+    Description: Name for State Machine.
+    Type: String
+    Default: api
+  DeployStageName:
+    Description: Stage Name for ApiGateway Deployment.
+    Type: String
+    Default: v1
+  ApiName:
+    Description: Name for API Gateway.
+    Type: String
+    Default: api
+  ApiResourcePath:
+    Description: Name for API Gateway Resource Path.
+    Type: String
+    Default: v1
+Resources:
+  SES:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cnwp-nested-stack-202211.s3.amazonaws.com/apigw/SES.yaml
+      Parameters:
+        Email: !Ref Email
+  IAMRoleLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cnwp-nested-stack-202211.s3.amazonaws.com/apigw/IAMRole_Lambda.yaml
+  IAMRoleStateMachine:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cnwp-nested-stack-202211.s3.amazonaws.com/apigw/IAMRole_StateMachine.yaml
+  LambdaEmail:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cnwp-nested-stack-202211.s3.amazonaws.com/apigw/Lambda_Email.yaml
+      Parameters:
+        ArnLambdaRole: !GetAtt IAMRoleLambda.Outputs.ArnLambdaRole
+        Email: !GetAtt SES.Outputs.EmailVerified
+  StateMachineSteps:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cnwp-nested-stack-202211.s3.amazonaws.com/apigw/StateMachine_Steps.yaml
+      Parameters:
+        ArnLambdaEmail: !GetAtt LambdaEmail.Outputs.ArnLambdaFnSES
+        ArnStateMachineRole: !GetAtt IAMRoleStateMachine.Outputs.ArnStateMachineRole
+        SMachineName: !Ref StateMachineName
+  LambdaAPI:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cnwp-nested-stack-202211.s3.amazonaws.com/apigw/Lambda_API.yaml
+      Parameters:
+        ArnLambdaRole: !GetAtt IAMRoleLambda.Outputs.ArnLambdaRole
+        StateMachineARN: !GetAtt StateMachineSteps.Outputs.ArnStateMachineSteps
+  APIGW:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cnwp-nested-stack-202211.s3.amazonaws.com/apigw/API_GW.yaml
+      Parameters:
+        ArnLambdaFnAPI: !GetAtt LambdaAPI.Outputs.ArnLambdaFnAPI
+        DeployStageName: !Ref DeployStageName
+        ApiName: !Ref ApiName
+        ApiResourcePath: !Ref ApiResourcePath
+  SSMParamURL:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cnwp-nested-stack-202211.s3.amazonaws.com/apigw/SSMParam_URL.yaml
+      Parameters:
+        ServelessURL: !GetAtt APIGW.Outputs.apiGatewayInvokeURL
