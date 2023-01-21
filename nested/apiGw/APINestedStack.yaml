@@ -1,11 +1,15 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Registration of a valid Email on AWS SES
+Description: This nested stack contain all the resources needed for create a Serveless App.
 Parameters:
   Email:
     Description: This email will be register on SES for recive the emails from the app.
     Type: String
     MinLength: 5
     ConstraintDescription: You should enter a valid email
+  SubjectShowOnEmail:
+    Description: Subject show it on Emails.
+    Type: String
+    Default: Message from Serveless Api.
   StateMachineName:
     Description: Name for State Machine.
     Type: String
@@ -42,6 +46,7 @@ Resources:
     Properties:
       TemplateURL: https://cnwp-nested-stack-202211.s3.amazonaws.com/apigw/Lambda_Email.yaml
       Parameters:
+        SubjectEmail: !Ref SubjectShowOnEmail
         ArnLambdaRole: !GetAtt IAMRoleLambda.Outputs.ArnLambdaRole
         Email: !GetAtt SES.Outputs.EmailVerified
   StateMachineSteps:
