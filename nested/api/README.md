@@ -10,7 +10,7 @@ The API Gateway is connected with a Lambda function which can send a order to a 
 
 ### Create the Stack and deploy the resources
 1. Now for deploy all the structure you should go to `CloudFormation` then `Stacks` and `Create stack` > `with new resources (standard)`.
-2. Into the input "Amazon S3 URL" you should enter this URL https://cnwp-nested-stack-202211.s3.amazonaws.com/apigw/APINestedStack.yaml the press `Next`.
+2. Into the input "Amazon S3 URL" you should enter this URL https://hugo-manzoni-labs.s3.amazonaws.com/stacks/apiserveless/APINestedStack.yaml the press `Next`.
 3. You must provide a name for you stack and add a valid email. Please press `Next`.
 4. Now press `Next` again, and in Capabilities check the acknowledge checkboxes and then `Submit`.
 5. You will receive an email from AWS with the subject "Amazon Web Services – Email Address Verification Request in region..." in order to verify the email address setup in point 3. 
@@ -36,3 +36,7 @@ The architecture of the App is compose by:
 ## AWS Architecture diagrams
 
 ![App Architecture](https://github.com/hcaman/aws-cfn-stacks/blob/master/nested/api/Arch_diagram.png?raw=true)
+
+## Credits
+This entire idea is based on this project: https://github.com/acantril/learn-cantrill-io-labs/tree/master/aws-serverless-pet-cuddle-o-tron. I just convert the idea in CloudFormation as a practice.
+A special thanks goes to Adrian Cantril :smiley:.
