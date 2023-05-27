@@ -8,7 +8,7 @@ Parameters:
     Type: String
   SourceCodeBucket:
     Type: String
-  SourceFilePatch:
+  SourceFilePath:
     Type: String
 
 Resources:
@@ -20,7 +20,7 @@ Resources:
         BranchName: !Ref RepoBranchName
         S3:
           Bucket: !Ref SourceCodeBucket
-          Key: !Ref SourceFilePatch
+          Key: !Ref SourceFilePath
 
 Outputs:
   CodeCommitRepoCloneHTTP:
